@@ -26,9 +26,19 @@ def linearityChecker(k,l):
     sig2 = sys1(k,n+1)+sys1(l,1-n)
     plt.stem(n,sig2)
 
-    if(sig1.all()==sig2.all()):
+    count = 0
+    for (i, j) in zip(sig1, sig2):
+        if (i == j):
+            continue
+        else:
+            count = 1
+            break
+
+    if (count == 0):
         print("It is linear")
-    else:print("it is non-linear")
+
+    else:
+        print("It is non-linear")
 
 linearityChecker(4,8)
 
