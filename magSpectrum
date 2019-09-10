@@ -1,0 +1,28 @@
+import numpy as np
+import math
+import cmath
+import matplotlib.pyplot as plt
+from scipy import signal
+
+def modXk(xn):
+    N = len(xn)
+    mag = []
+    for k in range(N):
+        xk = 0
+        for t in range(N):
+            xk += xn[t]*(math.cos(2*np.pi*k*t/N)-(1j*math.sin(2*np.pi*k*t/N)))
+        mod = math.sqrt((xk.real*xk.real)+(xk.imag*xk.imag))
+        mag.append(mod/(len(xn)/2))
+    return mag    
+    
+Fs = 100
+t = np.linspace(0,2,1000)
+sig = np.sin(t*5) #replace with any signal 
+
+k = np.linspace(0,2,1000)
+
+plt.subplot(211)
+plt.plot(k,modXk(sig)) #only half of this is valid, the other half is mirrored. We have to introduce nyquist limits 
+
+plt.subplot(212)
+plt.magnitude_spectrum(sig)    
