@@ -1,0 +1,93 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Sep 24 18:48:49 2019
+
+@author: akav
+"""
+
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+from scipy import signal
+from numpy.fft import fft,ifft,fftfreq
+
+plt.title("cb.en.u4ece18512")
+
+def invFourier(xk,limit):
+    N = len(xk)
+    sig = []
+    for k in range(N):
+        xn = 0
+        for t in range(N):
+            xn += (1/limit)*xk[t]*(math.cos(2*np.pi*k*t/N)+(1j*math.sin(2*np.pi*k*t/N)))
+        sig.append(xn)
+    return sig
+
+
+Fs = 1000
+
+Lx = 100
+
+omg = 2.0*np.pi/Lx
+
+w = np.linspace(0,3,50)
+
+def step(w):
+    arr = np.zeros(len(w))
+    ind = np.where((w<=np.pi/2)&(w>=0))
+    arr[ind] = 10
+    return arr
+
+plt.subplot(521)
+plt.plot(w,step(w))
+plt.ylabel("h(w)")
+
+hn = invFourier(step(w),50)
+
+Hn = 2.0*np.abs(hn)
+
+t = np.linspace(0,Lx,Fs)
+
+freqs = fftfreq(50)
+mask = freqs > 0
+
+plt.subplot(522)
+plt.plot(w[mask],Hn[mask])
+plt.ylabel("h(n)")
+
+plt.subplot(523)
+freq = 1
+xn = np.sin(omg*freq*t)
+plt.plot(t,xn)
+plt.ylabel("1Hz")
+
+plt.subplot(524)
+plt.plot(np.convolve(Hn[mask],xn))
+
+plt.subplot(525)
+freq = 10
+xn = np.sin(omg*freq*t)
+plt.plot(t,xn)
+plt.ylabel("10Hz")
+
+plt.subplot(526)
+plt.plot(np.convolve(Hn[mask],xn))
+
+plt.subplot(527)
+freq = 100
+xn = np.sin(omg*freq*t)
+plt.plot(t,xn)
+plt.ylabel("100Hz")
+
+plt.subplot(528)
+plt.plot(np.convolve(Hn[mask],xn))
+
+plt.subplot(529)
+freq = 150
+xn = np.sin(omg*freq*t)
+plt.plot(t,xn)
+plt.ylabel("150Hz")
+
+plt.subplot(5,2,10)
+plt.plot(np.convolve(Hn[mask],xn))
